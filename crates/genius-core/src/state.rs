@@ -107,7 +107,7 @@ pub struct EmergenceEvent {
 }
 
 /// Types of emergence that can be detected
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum EmergenceType {
     CollectiveStrategy,
     SwarmIntelligence,

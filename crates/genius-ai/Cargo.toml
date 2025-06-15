@@ -1,0 +1,19 @@
+[package]
+name = "genius-ai"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+genius-core = { path = "../genius-core" }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+ollama-rs = { workspace = true }
+aws-sdk-bedrockruntime = { workspace = true }
+async-openai = { workspace = true }
+dashmap = { workspace = true }
+rand = { workspace = true }
