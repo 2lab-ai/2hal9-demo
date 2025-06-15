@@ -1,0 +1,60 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/genius-core",
+    "crates/genius-engine", 
+    "crates/genius-ai",
+    "crates/genius-games",
+    "crates/genius-server",
+    "crates/genius-client",
+]
+
+[workspace.package]
+version = "0.1.0"
+authors = ["2Lab AI <team@2lab.ai>"]
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/2lab-ai/2hal9-demo"
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1.45", features = ["full"] }
+async-trait = "0.1"
+
+# Web framework
+axum = { version = "0.7", features = ["ws"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "fs"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "2.0"
+
+# Utilities
+uuid = { version = "1.17", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+dashmap = "6.1"
+rand = "0.9"
+
+# AI providers
+ollama-rs = "0.1"
+aws-sdk-bedrockruntime = "1.93"
+async-openai = "0.18"
+
+# Configuration
+config = "0.14"
+dotenvy = "0.15"
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
