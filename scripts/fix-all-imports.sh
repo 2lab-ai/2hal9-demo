@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Fix all imports comprehensively
-find /Users/icedac/2lab.ai/2hal9-demo/crates/genius-games/src -name "*.rs" -type f | while read file; do
+find "$(dirname "$0")/../crates/genius-games/src" -name "*.rs" -type f | while read file; do
     # Skip lib.rs and mod.rs files
     if [[ "$file" == *"lib.rs" ]] || [[ "$file" == *"mod.rs" ]]; then
         continue

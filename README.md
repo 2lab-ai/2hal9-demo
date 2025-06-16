@@ -47,7 +47,7 @@ cargo build --release
 cargo run --bin genius-server
 
 # Or use Docker
-docker-compose up
+docker-compose -f docker/docker-compose.yml up
 ```
 
 ### Running Your First Game
@@ -172,7 +172,7 @@ cargo test --test integration_tests
 ### Docker
 
 ```bash
-docker build -t genius-game-server .
+docker build -t genius-game-server -f docker/Dockerfile .
 docker run -p 8080:8080 genius-game-server
 ```
 
