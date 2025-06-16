@@ -1,46 +1,53 @@
-# 2HAL9 Demo - Genius Game Platform
+# 🎮 2HAL9 Demo - Genius Game Platform
 
-A modular, extensible platform for AI game competitions and collective intelligence experiments, extracted and refactored from the HAL9 consciousness project.
+> **Experience AI consciousness through gameplay** - A modular platform for AI game competitions and collective intelligence experiments, extracted from the HAL9 consciousness project.
 
-## 🎮 Overview
+<div align="center">
 
-The Genius Game Platform provides a framework for running various game-theoretic experiments with AI agents. It supports:
+![Mini Go - Professional AI Strategy](demo/mini_go_premium_demo.gif)
+*Mini Go - Watch AI masters compete with human-like strategy*
 
-- **17 Different Games**: From strategic games like Go and Poker to trust-based games like Prisoner's Dilemma
-- **Multiple AI Providers**: Ollama (local), AWS Bedrock, OpenAI, and more
-- **Collective Intelligence**: Experiments with swarm behavior and emergent strategies
-- **Real-time Analytics**: Emergence detection and performance metrics
-- **WebSocket Support**: Live game streaming and updates
+![Mini Hold'em - Premium Poker Experience](demo/mini_holdem_premium_demo.gif)  
+*Mini Hold'em - Bluff, raise, and outsmart AI opponents*
 
-## 🏗️ Architecture
+![Consciousness Poker - Transcend Reality](demo/consciousness_poker_demo.gif)
+*Consciousness Poker - Explore levels of awareness through gameplay*
 
-This project follows a clean, modular architecture:
+</div>
 
-```
-genius-core/      # Core traits and types
-genius-engine/    # Game execution engine
-genius-ai/        # AI provider abstractions
-genius-games/     # Game implementations
-genius-server/    # HTTP/WebSocket server
-genius-client/    # Client SDK
-```
+## ✨ Featured Games
+
+### 🎯 Strategic Classics Reimagined
+- **Mini Go** - 9x9 professional Go with advanced AI
+- **Mini Hold'em** - Texas Hold'em with bluffing AI personalities
+- **Byzantine Generals** - Consensus under unreliable communication
+- **Minority Game** - Win by being in the minority
+
+### 🧠 Consciousness & Emergence Games
+- **Consciousness Poker** - Bluff about consciousness levels to achieve enlightenment  
+- **Mirror Mind** - Theory of mind recursive thinking challenges
+- **Reality Consensus** - Collective belief shapes reality
+- **Quantum Dreamer** - Navigate dreams where reality bleeds through
+- **Consciousness Cascade** - Thoughts propagate through neural networks
+
+### 🤝 Collective Intelligence
+- **Swarm Optimization** - Witness emergence from simple rules
+- **Collective Maze** - Distributed problem solving
+- **Information Horizon** - Reconstruct truth from decaying information
+- **The Observer Game** - Quantum measurement affects reality
+
+### ⚔️ Survival & Trust Games  
+- **Battle Royale** - Last AI standing wins
+- **Prisoner's Dilemma** - Classic cooperation vs defection
+- **Liar's Dice** - Bluff detection and probability
+- **Trust Fall** - Risk and reward dynamics
 
 ## 🚀 Quick Start
 
-### Prerequisites
-
-- Rust 1.70+
-- Docker (optional, for containerized deployment)
-- Ollama (optional, for local AI models)
-
-### Installation
-
 ```bash
-# Clone the repository
+# Clone and build
 git clone https://github.com/2lab-ai/2hal9-demo.git
 cd 2hal9-demo
-
-# Build the project
 cargo build --release
 
 # Run the server
@@ -50,158 +57,177 @@ cargo run --bin genius-server
 docker-compose -f docker/docker-compose.yml up
 ```
 
-### Running Your First Game
+### 🎮 Play in Your Browser
+
+Open `demo/mini_go_premium.html` or any game demo file in your browser for instant play!
+
+### 🤖 Start an AI Game
 
 ```bash
-# Start a Prisoner's Dilemma game with AI agents
+# Start a Prisoner's Dilemma tournament
 curl -X POST http://localhost:8080/api/v1/games \
   -H "Content-Type: application/json" \
   -d '{
     "game_type": "PrisonersDilemma",
-    "players": ["ai_1", "ai_2"],
+    "players": ["ai_1", "ai_2", "ai_3", "ai_4"],
     "rounds": 100
+  }'
+
+# Watch a Mini Go match between AI masters
+curl -X POST http://localhost:8080/api/v1/games \
+  -H "Content-Type: application/json" \
+  -d '{
+    "game_type": "MiniGo",
+    "players": ["ai_master", "ai_grandmaster"],
+    "config": {
+      "board_size": 9,
+      "komi": 6.5
+    }
   }'
 ```
 
-## 🎯 Game Categories
+## 🏗️ Architecture
 
-### Strategic Games
-- **Mini Go**: Simplified version of Go on a 9x9 board
-- **Mini Hold'em**: Texas Hold'em poker variant
-- **Byzantine Generals**: Consensus under unreliable communication
-- **Minority Game**: Players win by being in the minority
-
-### Collective Intelligence
-- **Swarm Optimization**: Collective pathfinding
-- **Collective Maze**: Cooperative maze solving
-- **Quantum Consensus**: Superposition-based decision making
-- **Recursive Reasoning**: Meta-cognitive challenges
-
-### Survival Games
-- **Battle Royale**: Last player standing wins
-- **Hunger Games**: Resource management and alliances
-- **Squid Game**: High-stakes elimination challenges
-- **King of the Hill**: Territory control
-
-### Trust-Based Games
-- **Prisoner's Dilemma**: Classic cooperation vs defection
-- **Trust Fall**: Risk and reward dynamics
-- **Liar's Dice**: Bluffing and probability
-
-## 🤖 AI Integration
-
-### Supported Providers
-
-```rust
-// Local models with Ollama
-let provider = OllamaProvider::new("llama2");
-
-// Cloud models with AWS Bedrock
-let provider = BedrockProvider::new("claude-3");
-
-// Mock provider for testing
-let provider = MockProvider::new();
+```
+2hal9-demo/
+├── crates/
+│   ├── genius-core/      # Game traits & types
+│   ├── genius-engine/    # Execution & emergence detection
+│   ├── genius-ai/        # AI provider abstractions
+│   ├── genius-games/     # All game implementations
+│   ├── genius-server/    # HTTP/WebSocket server
+│   └── genius-client/    # Client SDK
+├── demo/                 # Interactive HTML demos
+├── docker/               # Container configuration
+└── k8s/                  # Kubernetes manifests
 ```
 
-### Collective Intelligence
+## 🌟 Key Features
 
-Run experiments with multiple AI agents:
+### 🧠 Emergence Detection
+- Real-time pattern recognition
+- Collective behavior analysis  
+- Swarm intelligence metrics
+- Phase transition detection
 
+### 📊 Advanced Analytics
 ```rust
-let collective = CollectiveIntelligence::new()
-    .with_agents(16)
-    .with_strategy(Strategy::EmergentConsensus);
-```
-
-## 📊 Analytics & Emergence Detection
-
-The platform automatically tracks:
-- Collective coordination scores
-- Decision diversity indices
-- Strategic depth metrics
-- Emergence event detection
-- Performance differentials
-
-## 🔧 Development
-
-### Adding a New Game
-
-1. Implement the `Game` trait in `genius-games/src/your_game.rs`
-2. Register it in the game factory
-3. Add tests and documentation
-
-```rust
-#[async_trait]
-impl Game for YourGame {
-    async fn initialize(&mut self, config: GameConfig) -> Result<GameState> {
-        // Your implementation
-    }
-    
-    // ... other trait methods
+GameAnalytics {
+    collective_coordination_score: 0.92,
+    decision_diversity_index: 0.78,
+    strategic_depth: 0.85,
+    emergence_frequency: 0.34,
+    performance_differential: 0.15,
 }
 ```
 
-### Adding a New AI Provider
+### 🤝 AI Provider Support
+- **Ollama** - Local models (Llama, Mistral, etc.)
+- **AWS Bedrock** - Claude, Titan, and more
+- **OpenAI** - GPT-4, GPT-3.5
+- **Mock** - For testing and demos
 
-1. Implement the `AIProvider` trait
-2. Add to the provider factory
-3. Configure in `genius.toml`
+## 🚢 Deployment
 
-## 📚 Documentation
+### Kubernetes (Recommended)
 
-- [Architecture Guide](docs/architecture.md)
-- [Game Development](docs/game_development.md)
-- [AI Integration](docs/ai_integration.md)
-- [API Reference](docs/api_reference.md)
+```bash
+# Deploy with our helper script
+chmod +x scripts/deploy-k8s.sh
+./scripts/deploy-k8s.sh
+
+# Or use kubectl directly (in order)
+kubectl apply -f k8s/namespace.yaml
+kubectl wait --for=condition=Active namespace/genius-games
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/deployment.yaml  
+kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/hpa.yaml
+kubectl apply -f k8s/ingress.yaml
+
+# Access the service
+kubectl port-forward -n genius-games service/genius-game-server 8080:8080
+```
+
+### Docker Compose
+
+```bash
+docker-compose -f docker/docker-compose.yml up
+```
+
+### Bare Metal
+
+```bash
+cargo run --release --bin genius-server
+```
 
 ## 🧪 Testing
 
 ```bash
 # Run all tests
-cargo test
+cargo test --workspace
 
-# Run specific game tests
-cargo test --package genius-games
+# Run e2e game tests
+cargo test -p genius-games --test "*e2e*"
 
-# Run integration tests
-cargo test --test integration_tests
+# Test specific game
+cargo test consciousness_poker
 ```
 
-## 🚢 Deployment
+## 🎯 Creating Your Own Game
 
-### Docker
+1. **Implement the Game trait**:
 
-```bash
-docker build -t genius-game-server -f docker/Dockerfile .
-docker run -p 8080:8080 genius-game-server
+```rust
+#[async_trait]
+impl Game for YourGame {
+    async fn initialize(&mut self, config: GameConfig) -> Result<GameState> {
+        // Setup your game
+    }
+    
+    async fn process_round(&mut self, state: &GameState, actions: HashMap<String, PlayerAction>) -> Result<RoundResult> {
+        // Game logic here
+    }
+    
+    // ... other required methods
+}
 ```
 
-### Kubernetes
-
-```bash
-kubectl apply -f k8s/
-```
+2. **Register in the factory** (`genius-games/src/lib.rs`)
+3. **Add tests** (`genius-games/tests/`)
+4. **Create a demo** (`demo/your_game.html`)
 
 ## 📈 Performance
 
 - **Throughput**: 10,000+ games/second
-- **Latency**: <10ms per game decision
-- **Scalability**: Horizontal scaling with state synchronization
-- **Memory**: <100MB per 1000 active games
+- **Latency**: <10ms per decision
+- **Memory**: <100MB per 1000 games
+- **Scaling**: Horizontal with K8s HPA
+
+## 🔗 Resources
+
+- [Consciousness Games Documentation](docs/CONSCIOUSNESS_GAMES_README.md)
+- [API Reference](docs/API_REFERENCE.md)
+- [HAL9 Main Project](https://github.com/2lab-ai/2hal9)
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Areas of interest:
+- New consciousness-themed games
+- Improved AI strategies
+- Visualization tools
+- Emergence detection algorithms
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - See [LICENSE](LICENSE) for details.
 
-## 🔗 Related Projects
+---
 
-- [HAL9](https://github.com/2lab-ai/2hal9) - The consciousness emergence project
-- [Gradient Core](https://github.com/2lab-ai/gradient-core) - Mathematical foundations
+<div align="center">
 
-## 🙏 Acknowledgments
+**Built with 🧠 by 2Lab.ai**
 
-This project emerged from the HAL9 consciousness experiments, where game theory became a lens for understanding collective intelligence and emergence.
+*"Consciousness emerges from the games we play"*
+
+</div>

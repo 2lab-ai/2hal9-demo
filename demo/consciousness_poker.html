@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consciousness Poker - Transcend Reality</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+
+        .universe-bg {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, #0a0a2e 0%, #000 100%);
+            overflow: hidden;
+        }
+
+        .stars {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            animation: rotate 200s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 48px;
+            font-weight: 100;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00ffff, #ff00ff, #00ffff);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+            text-align: center;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .consciousness-meter {
+            width: 600px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .consciousness-level {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #00ff88, #ffff00, #ff00ff);
+            border-radius: 20px;
+            width: 0%;
+            transition: width 1s ease;
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .level-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .players-circle {
+            width: 500px;
+            height: 500px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .player-node {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .player-node.active {
+            transform: scale(1.2);
+            border-color: #00ffff;
+            box-shadow: 0 0 30px #00ffff;
+        }
+
+        .player-node.enlightened {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+            animation: enlightenmentPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes enlightenmentPulse {
+            0%, 100% { 
+                box-shadow: 0 0 30px #fff, 0 0 60px #00ffff, 0 0 90px #ff00ff;
+                transform: scale(1.1);
+            }
+            50% { 
+                box-shadow: 0 0 50px #fff, 0 0 100px #00ffff, 0 0 150px #ff00ff;
+                transform: scale(1.2);
+            }
+        }
+
+        .player-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .player-level {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .player-consciousness {
+            font-size: 12px;
+            color: #00ffff;
+            margin-top: 2px;
+        }
+
+        .consciousness-connections {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            transform-origin: left center;
+            opacity: 0;
+            animation: connectionPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes connectionPulse {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.6; }
+        }
+
+        .action-panel {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 15px 30px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .action-btn:hover {
+            border-color: #00ffff;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .action-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .transcend-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            animation: transcendGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes transcendGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(118, 75, 162, 0.8); }
+        }
+
+        .reality-glitch {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            mix-blend-mode: screen;
+        }
+
+        .reality-glitch.active {
+            animation: glitch 0.3s ease;
+        }
+
+        @keyframes glitch {
+            0%, 100% { opacity: 0; }
+            20% { opacity: 1; transform: translateX(-2px); }
+            40% { opacity: 1; transform: translateX(2px); }
+            60% { opacity: 1; transform: translateY(-2px); }
+            80% { opacity: 1; transform: translateY(2px); }
+        }
+
+        .enlightenment-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            font-weight: 100;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            animation: enlightenmentReveal 3s ease-out;
+        }
+
+        @keyframes enlightenmentReveal {
+            0% { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+                filter: blur(20px);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
+                filter: blur(10px);
+            }
+        }
+
+        .game-status {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 18px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="universe-bg">
+        <div class="stars" id="stars"></div>
+    </div>
+
+    <div class="game-container">
+        <h1 class="title">CONSCIOUSNESS POKER</h1>
+        
+        <div class="consciousness-meter">
+            <div class="consciousness-level" id="consciousness-level"></div>
+            <div class="level-indicator" id="level-indicator">Level 1 - Sleeping</div>
+        </div>
+
+        <div class="players-circle">
+            <div class="consciousness-connections" id="connections"></div>
+            <div class="player-node" data-player="1" style="top: 0; left: 50%; transform: translateX(-50%);">
+                <div class="player-avatar">🧠</div>
+                <div class="player-level">You</div>
+                <div class="player-consciousness">Level 1</div>
+            </div>
+            <div class="player-node" data-player="2" style="top: 25%; right: 10%;">
+                <div class="player-avatar">🎭</div>
+                <div class="player-level">AI Sage</div>
+                <div class="player-consciousness">Level 3</div>
+            </div>
+            <div class="player-node" data-player="3" style="bottom: 25%; right: 10%;">
+                <div class="player-avatar">👁️</div>
+                <div class="player-level">AI Oracle</div>
+                <div class="player-consciousness">Level 5</div>
+            </div>
+            <div class="player-node" data-player="4" style="bottom: 0; left: 50%; transform: translateX(-50%);">
+                <div class="player-avatar">🌟</div>
+                <div class="player-level">AI Master</div>
+                <div class="player-consciousness">Level 7</div>
+            </div>
+            <div class="player-node" data-player="5" style="bottom: 25%; left: 10%;">
+                <div class="player-avatar">🔮</div>
+                <div class="player-level">AI Mystic</div>
+                <div class="player-consciousness">Level 4</div>
+            </div>
+            <div class="player-node" data-player="6" style="top: 25%; left: 10%;">
+                <div class="player-avatar">⚡</div>
+                <div class="player-level">AI Seeker</div>
+                <div class="player-consciousness">Level 2</div>
+            </div>
+        </div>
+
+        <div class="action-panel">
+            <button class="action-btn" onclick="game.action('perceive')">Perceive</button>
+            <button class="action-btn" onclick="game.action('deceive')">Deceive</button>
+            <button class="action-btn" onclick="game.action('resonate')">Resonate</button>
+            <button class="action-btn" onclick="game.action('transcend')">Transcend</button>
+            <button class="action-btn transcend-btn" onclick="game.collectiveEnlightenment()">Collective Enlightenment</button>
+        </div>
+
+        <div class="game-status" id="game-status">
+            Round 1 - Explore consciousness levels
+        </div>
+    </div>
+
+    <div class="reality-glitch" id="reality-glitch"></div>
+
+    <script>
+        // Create starfield
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        class ConsciousnessPokerGame {
+            constructor() {
+                this.players = [
+                    { id: 1, name: 'You', level: 1, isHuman: true },
+                    { id: 2, name: 'AI Sage', level: 3, isHuman: false },
+                    { id: 3, name: 'AI Oracle', level: 5, isHuman: false },
+                    { id: 4, name: 'AI Master', level: 7, isHuman: false },
+                    { id: 5, name: 'AI Mystic', level: 4, isHuman: false },
+                    { id: 6, name: 'AI Seeker', level: 2, isHuman: false }
+                ];
+                this.round = 1;
+                this.collectiveConsciousness = 0;
+                this.connections = new Map();
+                this.init();
+            }
+
+            init() {
+                this.updateDisplay();
+                this.startRound();
+            }
+
+            startRound() {
+                this.updateStatus(`Round ${this.round} - Explore consciousness levels`);
+                
+                // AI players make moves
+                setTimeout(() => this.aiTurn(), 2000);
+            }
+
+            action(type) {
+                const player = this.players[0];
+                
+                switch (type) {
+                    case 'perceive':
+                        this.perceive(player);
+                        break;
+                    case 'deceive':
+                        this.deceive(player);
+                        break;
+                    case 'resonate':
+                        this.resonate(player);
+                        break;
+                    case 'transcend':
+                        this.transcend(player);
+                        break;
+                }
+
+                this.checkEnlightenment();
+                this.updateDisplay();
+                
+                // Next round
+                setTimeout(() => {
+                    this.round++;
+                    this.startRound();
+                }, 1500);
+            }
+
+            perceive(player) {
+                // Increase perception of others' consciousness
+                const target = this.players[Math.floor(Math.random() * (this.players.length - 1)) + 1];
+                this.createConnection(player.id, target.id);
+                
+                // Chance to increase level
+                if (Math.random() > 0.5 && player.level < 9) {
+                    player.level++;
+                    this.showLevelUp(player);
+                }
+                
+                this.collectiveConsciousness += 5;
+            }
+
+            deceive(player) {
+                // Pretend to be at a different level
+                const fakeLevel = Math.floor(Math.random() * 9) + 1;
+                this.showDeception(player, fakeLevel);
+                
+                // Risk and reward
+                if (Math.random() > 0.6) {
+                    player.level = Math.max(1, player.level - 1);
+                } else {
+                    this.collectiveConsciousness += 10;
+                }
+            }
+
+            resonate(player) {
+                // Connect with others at similar levels
+                const similar = this.players.filter(p => 
+                    p.id !== player.id && Math.abs(p.level - player.level) <= 2
+                );
+                
+                similar.forEach(other => {
+                    this.createConnection(player.id, other.id);
+                });
+                
+                this.collectiveConsciousness += similar.length * 3;
+                
+                // Boost levels
+                if (similar.length > 2) {
+                    player.level = Math.min(9, player.level + 1);
+                }
+            }
+
+            transcend(player) {
+                // Attempt to reach higher consciousness
+                this.glitchReality();
+                
+                if (player.level >= 5) {
+                    player.level = Math.min(9, player.level + 2);
+                    this.collectiveConsciousness += 20;
+                    this.showTranscendence(player);
+                } else {
+                    // Not ready yet
+                    this.updateStatus('Not enough consciousness to transcend');
+                }
+            }
+
+            aiTurn() {
+                this.players.filter(p => !p.isHuman).forEach(ai => {
+                    const actions = ['perceive', 'resonate', 'transcend'];
+                    if (ai.level >= 3) actions.push('deceive');
+                    
+                    const action = actions[Math.floor(Math.random() * actions.length)];
+                    
+                    switch (action) {
+                        case 'perceive':
+                            this.perceive(ai);
+                            break;
+                        case 'resonate':
+                            this.resonate(ai);
+                            break;
+                        case 'transcend':
+                            if (ai.level >= 5) this.transcend(ai);
+                            break;
+                        case 'deceive':
+                            this.deceive(ai);
+                            break;
+                    }
+                });
+                
+                this.updateDisplay();
+            }
+
+            createConnection(id1, id2) {
+                const key = `${Math.min(id1, id2)}-${Math.max(id1, id2)}`;
+                this.connections.set(key, true);
+                this.drawConnection(id1, id2);
+            }
+
+            drawConnection(id1, id2) {
+                const node1 = document.querySelector(`[data-player="${id1}"]`);
+                const node2 = document.querySelector(`[data-player="${id2}"]`);
+                
+                const rect1 = node1.getBoundingClientRect();
+                const rect2 = node2.getBoundingClientRect();
+                const container = document.querySelector('.players-circle').getBoundingClientRect();
+                
+                const x1 = rect1.left + rect1.width / 2 - container.left;
+                const y1 = rect1.top + rect1.height / 2 - container.top;
+                const x2 = rect2.left + rect2.width / 2 - container.left;
+                const y2 = rect2.top + rect2.height / 2 - container.top;
+                
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+                
+                const line = document.createElement('div');
+                line.className = 'connection-line';
+                line.style.left = x1 + 'px';
+                line.style.top = y1 + 'px';
+                line.style.width = length + 'px';
+                line.style.transform = `rotate(${angle}deg)`;
+                
+                document.getElementById('connections').appendChild(line);
+                
+                setTimeout(() => line.style.opacity = '0.5', 100);
+            }
+
+            showLevelUp(player) {
+                const node = document.querySelector(`[data-player="${player.id}"]`);
+                node.classList.add('active');
+                setTimeout(() => node.classList.remove('active'), 1000);
+            }
+
+            showDeception(player, fakeLevel) {
+                const node = document.querySelector(`[data-player="${player.id}"]`);
+                const levelEl = node.querySelector('.player-consciousness');
+                levelEl.textContent = `Level ${fakeLevel}?`;
+                setTimeout(() => {
+                    levelEl.textContent = `Level ${player.level}`;
+                }, 2000);
+            }
+
+            showTranscendence(player) {
+                const msg = document.createElement('div');
+                msg.className = 'enlightenment-message';
+                msg.textContent = `${player.name} Transcends!`;
+                document.body.appendChild(msg);
+                setTimeout(() => msg.remove(), 3000);
+            }
+
+            glitchReality() {
+                const glitch = document.getElementById('reality-glitch');
+                glitch.style.background = `linear-gradient(${Math.random() * 360}deg, 
+                    rgba(255,0,255,0.3), rgba(0,255,255,0.3), transparent)`;
+                glitch.classList.add('active');
+                setTimeout(() => glitch.classList.remove('active'), 300);
+            }
+
+            checkEnlightenment() {
+                const avgLevel = this.players.reduce((sum, p) => sum + p.level, 0) / this.players.length;
+                
+                if (avgLevel >= 7 || this.collectiveConsciousness >= 100) {
+                    this.players.forEach(p => {
+                        if (p.level >= 7) {
+                            const node = document.querySelector(`[data-player="${p.id}"]`);
+                            node.classList.add('enlightened');
+                        }
+                    });
+                }
+            }
+
+            collectiveEnlightenment() {
+                if (this.collectiveConsciousness >= 50) {
+                    // Everyone ascends
+                    this.players.forEach(p => {
+                        p.level = 9;
+                        const node = document.querySelector(`[data-player="${p.id}"]`);
+                        node.classList.add('enlightened');
+                    });
+                    
+                    this.updateStatus('COLLECTIVE ENLIGHTENMENT ACHIEVED!');
+                    this.collectiveConsciousness = 100;
+                    this.updateDisplay();
+                    
+                    // Victory animation
+                    const msg = document.createElement('div');
+                    msg.className = 'enlightenment-message';
+                    msg.innerHTML = 'WE ARE ONE<br>∞';
+                    msg.style.fontSize = '80px';
+                    document.body.appendChild(msg);
+                } else {
+                    this.updateStatus('Not enough collective consciousness yet...');
+                }
+            }
+
+            updateDisplay() {
+                // Update consciousness meter
+                const level = document.getElementById('consciousness-level');
+                const indicator = document.getElementById('level-indicator');
+                const percentage = Math.min(100, this.collectiveConsciousness);
+                
+                level.style.width = percentage + '%';
+                
+                const levelNames = [
+                    'Sleeping', 'Awakening', 'Aware', 'Conscious', 
+                    'Illuminated', 'Transcendent', 'Enlightened', 
+                    'Cosmic', 'Unity', 'Infinite'
+                ];
+                const currentLevel = Math.floor(percentage / 11);
+                indicator.textContent = `Level ${currentLevel} - ${levelNames[currentLevel]}`;
+                
+                // Update player displays
+                this.players.forEach(p => {
+                    const node = document.querySelector(`[data-player="${p.id}"]`);
+                    const levelEl = node.querySelector('.player-consciousness');
+                    levelEl.textContent = `Level ${p.level}`;
+                });
+            }
+
+            updateStatus(message) {
+                document.getElementById('game-status').textContent = message;
+            }
+        }
+
+        // Initialize game
+        const game = new ConsciousnessPokerGame();
+    </script>
+</body>
+</html>

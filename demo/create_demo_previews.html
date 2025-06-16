@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Demo Previews</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+        }
+        .preview {
+            width: 600px;
+            height: 675px;
+            position: relative;
+            margin: 20px;
+            display: inline-block;
+        }
+        .preview.holdem {
+            width: 825px;
+            height: 600px;
+        }
+        .preview.consciousness {
+            width: 800px;
+            height: 600px;
+        }
+        .gif-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .play-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        .play-button::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 25px solid #333;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mini Go Preview -->
+    <div class="preview">
+        <iframe src="mini_go_premium.html" width="600" height="675" frameborder="0"></iframe>
+        <div class="gif-overlay">GIF DEMO</div>
+        <div class="play-button"></div>
+    </div>
+
+    <!-- Mini Hold'em Preview -->
+    <div class="preview holdem">
+        <iframe src="mini_holdem_premium.html" width="825" height="600" frameborder="0"></iframe>
+        <div class="gif-overlay">GIF DEMO</div>
+        <div class="play-button"></div>
+    </div>
+
+    <!-- Consciousness Poker Preview -->
+    <div class="preview consciousness">
+        <iframe src="consciousness_poker.html" width="800" height="600" frameborder="0"></iframe>
+        <div class="gif-overlay">GIF DEMO</div>
+        <div class="play-button"></div>
+    </div>
+
+    <script>
+        // Disable interaction with iframes
+        document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.style.pointerEvents = 'none';
+        });
+        
+        // Add click handlers to play buttons
+        document.querySelectorAll('.play-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const iframe = this.parentElement.querySelector('iframe');
+                window.open(iframe.src, '_blank');
+            });
+        });
+    </script>
+</body>
+</html>

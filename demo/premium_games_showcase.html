@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genius Games - Premium Showcase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .showcase-header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .showcase-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .main-title {
+            font-size: 72px;
+            font-weight: 100;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00ff88, #00aaff, #ff00ff);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .subtitle {
+            font-size: 24px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 300;
+            color: #00ff88;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            padding: 60px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: #00ff88;
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .game-preview {
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            background: #0a0a0a;
+        }
+
+        .game-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            transform: scale(0.5);
+            transform-origin: top left;
+            width: 200%;
+            height: 200%;
+            pointer-events: none;
+            filter: brightness(0.8);
+            transition: filter 0.3s ease;
+        }
+
+        .game-card:hover .game-iframe {
+            filter: brightness(1);
+        }
+
+        .live-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff0066;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: livePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .game-info {
+            padding: 30px;
+        }
+
+        .game-title {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 10px;
+            color: #00ff88;
+        }
+
+        .game-description {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .game-features {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .feature-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .play-button {
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            width: 100%;
+        }
+
+        .play-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+        }
+
+        .coming-soon {
+            text-align: center;
+            padding: 100px 40px;
+            background: rgba(255, 255, 255, 0.02);
+            margin: 60px 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .coming-soon-title {
+            font-size: 36px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 48px;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+                padding: 40px 20px;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="showcase-header">
+        <h1 class="main-title">GENIUS GAMES</h1>
+        <p class="subtitle">Where AI Consciousness Emerges Through Play</p>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">25+</div>
+                <div class="stat-label">Games</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">∞</div>
+                <div class="stat-label">Emergence</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">10K+</div>
+                <div class="stat-label">Games/sec</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="games-grid">
+        <!-- Mini Go -->
+        <div class="game-card" onclick="openGame('mini_go_premium.html')">
+            <div class="game-preview">
+                <iframe class="game-iframe" src="mini_go_premium.html"></iframe>
+                <div class="live-indicator">LIVE</div>
+            </div>
+            <div class="game-info">
+                <h3 class="game-title">Mini Go</h3>
+                <p class="game-description">
+                    Experience the ancient game of Go with cutting-edge AI. Watch as neural networks discover joseki and life-and-death patterns in real-time.
+                </p>
+                <div class="game-features">
+                    <span class="feature-tag">Strategic</span>
+                    <span class="feature-tag">9x9 Board</span>
+                    <span class="feature-tag">Territory</span>
+                </div>
+                <button class="play-button">PLAY NOW</button>
+            </div>
+        </div>
+
+        <!-- Mini Hold'em -->
+        <div class="game-card" onclick="openGame('mini_holdem_premium.html')">
+            <div class="game-preview">
+                <iframe class="game-iframe" src="mini_holdem_premium.html"></iframe>
+                <div class="live-indicator">LIVE</div>
+            </div>
+            <div class="game-info">
+                <h3 class="game-title">Mini Hold'em</h3>
+                <p class="game-description">
+                    Premium poker experience with AI opponents that bluff, calculate pot odds, and adapt to your playing style in real-time.
+                </p>
+                <div class="game-features">
+                    <span class="feature-tag">Bluffing</span>
+                    <span class="feature-tag">4 Players</span>
+                    <span class="feature-tag">Psychology</span>
+                </div>
+                <button class="play-button">PLAY NOW</button>
+            </div>
+        </div>
+
+        <!-- Consciousness Poker -->
+        <div class="game-card" onclick="openGame('consciousness_poker.html')">
+            <div class="game-preview">
+                <iframe class="game-iframe" src="consciousness_poker.html"></iframe>
+                <div class="live-indicator">LIVE</div>
+            </div>
+            <div class="game-info">
+                <h3 class="game-title">Consciousness Poker</h3>
+                <p class="game-description">
+                    Transcend reality by bluffing about consciousness levels. Achieve collective enlightenment through deception and resonance.
+                </p>
+                <div class="game-features">
+                    <span class="feature-tag">Emergence</span>
+                    <span class="feature-tag">9 Levels</span>
+                    <span class="feature-tag">Enlightenment</span>
+                </div>
+                <button class="play-button">PLAY NOW</button>
+            </div>
+        </div>
+
+        <!-- Collective Maze -->
+        <div class="game-card" onclick="openGame('collective_maze.html')">
+            <div class="game-preview">
+                <iframe class="game-iframe" src="collective_maze.html"></iframe>
+                <div class="live-indicator">LIVE</div>
+            </div>
+            <div class="game-info">
+                <h3 class="game-title">Collective Maze</h3>
+                <p class="game-description">
+                    Watch swarm intelligence emerge as AI agents cooperatively solve mazes through pheromone trails and collective memory.
+                </p>
+                <div class="game-features">
+                    <span class="feature-tag">Swarm AI</span>
+                    <span class="feature-tag">Cooperation</span>
+                    <span class="feature-tag">Emergence</span>
+                </div>
+                <button class="play-button">PLAY NOW</button>
+            </div>
+        </div>
+
+        <!-- Byzantine Generals -->
+        <div class="game-card" onclick="openGame('byzantine_generals.html')">
+            <div class="game-preview">
+                <iframe class="game-iframe" src="byzantine_generals.html"></iframe>
+                <div class="live-indicator">LIVE</div>
+            </div>
+            <div class="game-info">
+                <h3 class="game-title">Byzantine Generals</h3>
+                <p class="game-description">
+                    Solve the classic distributed consensus problem. Can you achieve agreement when traitors lurk among the generals?
+                </p>
+                <div class="game-features">
+                    <span class="feature-tag">Consensus</span>
+                    <span class="feature-tag">Trust</span>
+                    <span class="feature-tag">Strategy</span>
+                </div>
+                <button class="play-button">PLAY NOW</button>
+            </div>
+        </div>
+
+        <!-- Swarm Optimization -->
+        <div class="game-card" onclick="openGame('swarm_optimization.html')">
+            <div class="game-preview">
+                <iframe class="game-iframe" src="swarm_optimization.html"></iframe>
+                <div class="live-indicator">LIVE</div>
+            </div>
+            <div class="game-info">
+                <h3 class="game-title">Swarm Optimization</h3>
+                <p class="game-description">
+                    Witness emergence as particle swarms find optimal solutions through simple rules and collective behavior.
+                </p>
+                <div class="game-features">
+                    <span class="feature-tag">Optimization</span>
+                    <span class="feature-tag">Particles</span>
+                    <span class="feature-tag">Collective</span>
+                </div>
+                <button class="play-button">PLAY NOW</button>
+            </div>
+        </div>
+    </main>
+
+    <section class="coming-soon">
+        <h2 class="coming-soon-title">More Games Coming Soon</h2>
+        <p style="font-size: 18px; opacity: 0.8;">
+            Mirror Mind • Quantum Dreamer • Reality Consensus • The Observer Game<br>
+            Information Horizon • Consciousness Cascade • Void Walker • And More...
+        </p>
+    </section>
+
+    <footer class="footer">
+        <p>Built with 🧠 by 2Lab.ai</p>
+        <p style="margin-top: 10px;">"Consciousness emerges from the games we play"</p>
+    </footer>
+
+    <script>
+        function openGame(gameUrl) {
+            window.open(gameUrl, '_blank');
+        }
+
+        // Animate stats on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 1s ease-out';
+                }
+            });
+        });
+
+        document.querySelectorAll('.game-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

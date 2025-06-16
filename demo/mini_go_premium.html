@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Go - Premium Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .game-container {
+            background: rgba(30, 30, 50, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                        0 0 100px rgba(100, 100, 255, 0.1);
+            animation: containerGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes containerGlow {
+            from { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 100px rgba(100, 100, 255, 0.1); }
+            to { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 120px rgba(100, 100, 255, 0.2); }
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-title {
+            font-size: 42px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #00ff88, #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            animation: titlePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .player-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .player-card.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .player-name {
+            font-size: 18px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .player-score {
+            font-size: 24px;
+            font-weight: 300;
+            color: #00ff88;
+        }
+
+        .board-container {
+            position: relative;
+            background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .go-board {
+            display: grid;
+            grid-template-columns: repeat(9, 50px);
+            grid-template-rows: repeat(9, 50px);
+            gap: 0;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .board-lines {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            width: 400px;
+            height: 400px;
+            pointer-events: none;
+        }
+
+        .board-line {
+            stroke: rgba(255, 255, 255, 0.2);
+            stroke-width: 1;
+        }
+
+        .star-point {
+            fill: rgba(255, 255, 255, 0.3);
+        }
+
+        .intersection {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+
+        .intersection:hover::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: hoverPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes hoverPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.2; }
+        }
+
+        .stone {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            position: relative;
+            animation: stonePlace 0.3s ease-out;
+            cursor: default;
+        }
+
+        @keyframes stonePlace {
+            from { 
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+            to { 
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .stone.black {
+            background: radial-gradient(circle at 30% 30%, #444, #000);
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5),
+                        inset -2px -2px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .stone.white {
+            background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3),
+                        inset -2px -2px 3px rgba(255, 255, 255, 0.5);
+        }
+
+        .captured-stone {
+            animation: captureAnimation 0.5s ease-out forwards;
+        }
+
+        @keyframes captureAnimation {
+            to {
+                transform: scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .last-move-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff0066;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: markerPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes markerPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; }
+        }
+
+        .controls {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.secondary {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn.secondary:hover {
+            border-color: #00ff88;
+            color: #00ff88;
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .status-bar {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            color: #00ff88;
+            min-height: 30px;
+        }
+
+        .ai-thinking {
+            display: inline-block;
+            animation: thinking 1s ease-in-out infinite;
+        }
+
+        @keyframes thinking {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .territory-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .territory-overlay.show {
+            opacity: 0.5;
+        }
+
+        .territory-square {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+        }
+
+        .territory-square.black {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .territory-square.white {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1 class="game-title">MINI GO</h1>
+            <p style="opacity: 0.6; font-size: 14px;">9x9 Professional Edition</p>
+        </div>
+
+        <div class="player-info">
+            <div class="player-card" id="player1">
+                <div class="player-name">Human</div>
+                <div class="player-score">Captures: <span id="captures1">0</span></div>
+            </div>
+            <div class="player-card" id="player2">
+                <div class="player-name">AI Master</div>
+                <div class="player-score">Captures: <span id="captures2">0</span></div>
+            </div>
+        </div>
+
+        <div class="board-container">
+            <svg class="board-lines" viewBox="0 0 400 400">
+                <!-- Grid lines -->
+                <g id="grid-lines"></g>
+                <!-- Star points -->
+                <circle class="star-point" cx="100" cy="100" r="3"/>
+                <circle class="star-point" cx="200" cy="100" r="3"/>
+                <circle class="star-point" cx="300" cy="100" r="3"/>
+                <circle class="star-point" cx="100" cy="200" r="3"/>
+                <circle class="star-point" cx="200" cy="200" r="4"/>
+                <circle class="star-point" cx="300" cy="200" r="3"/>
+                <circle class="star-point" cx="100" cy="300" r="3"/>
+                <circle class="star-point" cx="200" cy="300" r="3"/>
+                <circle class="star-point" cx="300" cy="300" r="3"/>
+            </svg>
+            <div class="go-board" id="board"></div>
+            <div class="territory-overlay" id="territory-overlay"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn secondary" onclick="game.pass()">Pass</button>
+            <button class="btn" onclick="game.newGame()">New Game</button>
+            <button class="btn secondary" onclick="game.showTerritory()">Show Territory</button>
+        </div>
+
+        <div class="status-bar" id="status">Click to place a stone</div>
+    </div>
+
+    <script>
+        class MiniGoGame {
+            constructor() {
+                this.board = Array(9).fill(null).map(() => Array(9).fill(null));
+                this.currentPlayer = 'black';
+                this.captures = { black: 0, white: 0 };
+                this.lastMove = null;
+                this.passes = 0;
+                this.gameOver = false;
+                this.initBoard();
+                this.drawGridLines();
+            }
+
+            drawGridLines() {
+                const svg = document.getElementById('grid-lines');
+                // Horizontal lines
+                for (let i = 0; i < 9; i++) {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.classList.add('board-line');
+                    line.setAttribute('x1', '0');
+                    line.setAttribute('y1', i * 50);
+                    line.setAttribute('x2', '400');
+                    line.setAttribute('y2', i * 50);
+                    svg.appendChild(line);
+                }
+                // Vertical lines
+                for (let i = 0; i < 9; i++) {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.classList.add('board-line');
+                    line.setAttribute('x1', i * 50);
+                    line.setAttribute('y1', '0');
+                    line.setAttribute('x2', i * 50);
+                    line.setAttribute('y2', '400');
+                    svg.appendChild(line);
+                }
+            }
+
+            initBoard() {
+                const boardEl = document.getElementById('board');
+                boardEl.innerHTML = '';
+
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        const intersection = document.createElement('div');
+                        intersection.className = 'intersection';
+                        intersection.dataset.row = row;
+                        intersection.dataset.col = col;
+                        intersection.onclick = () => this.placeStone(row, col);
+                        boardEl.appendChild(intersection);
+                    }
+                }
+                this.updateDisplay();
+            }
+
+            placeStone(row, col) {
+                if (this.gameOver || this.board[row][col] || this.currentPlayer === 'white') return;
+
+                // Try to place stone
+                if (this.isValidMove(row, col, 'black')) {
+                    this.board[row][col] = 'black';
+                    this.lastMove = { row, col };
+                    this.passes = 0;
+
+                    // Check for captures
+                    this.checkCaptures(row, col, 'white');
+                    
+                    // Update display
+                    this.updateDisplay();
+                    this.updateStatus('AI is thinking...');
+                    
+                    // Switch to AI
+                    this.currentPlayer = 'white';
+                    this.updateActivePlayer();
+                    
+                    // AI move after delay
+                    setTimeout(() => this.aiMove(), 1000);
+                }
+            }
+
+            aiMove() {
+                if (this.gameOver) return;
+
+                // Find best move (simple AI)
+                const validMoves = [];
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        if (this.board[row][col] === null && this.isValidMove(row, col, 'white')) {
+                            validMoves.push({ row, col, score: this.evaluateMove(row, col, 'white') });
+                        }
+                    }
+                }
+
+                if (validMoves.length === 0) {
+                    this.pass();
+                    return;
+                }
+
+                // Sort by score and pick best move
+                validMoves.sort((a, b) => b.score - a.score);
+                const move = validMoves[0];
+
+                this.board[move.row][move.col] = 'white';
+                this.lastMove = { row: move.row, col: move.col };
+                this.passes = 0;
+
+                // Check for captures
+                this.checkCaptures(move.row, move.col, 'black');
+
+                // Update display
+                this.updateDisplay();
+                this.updateStatus('Your turn');
+
+                // Switch back to human
+                this.currentPlayer = 'black';
+                this.updateActivePlayer();
+            }
+
+            evaluateMove(row, col, color) {
+                let score = Math.random() * 10; // Base random score
+
+                // Prefer center and star points
+                if (row === 4 && col === 4) score += 20;
+                if ((row === 2 || row === 6) && (col === 2 || col === 6)) score += 10;
+
+                // Check potential captures
+                const opponent = color === 'black' ? 'white' : 'black';
+                const neighbors = this.getNeighbors(row, col);
+                for (const [nr, nc] of neighbors) {
+                    if (this.board[nr][nc] === opponent) {
+                        const group = this.getGroup(nr, nc);
+                        if (this.countLiberties(group) === 1) {
+                            score += group.length * 50; // High score for captures
+                        }
+                    }
+                }
+
+                return score;
+            }
+
+            isValidMove(row, col, color) {
+                if (this.board[row][col] !== null) return false;
+
+                // Temporarily place stone
+                this.board[row][col] = color;
+
+                // Check for suicide
+                const group = this.getGroup(row, col);
+                const hasLiberties = this.countLiberties(group) > 0;
+
+                // Check if it captures opponent stones
+                const opponent = color === 'black' ? 'white' : 'black';
+                let capturesOpponent = false;
+                const neighbors = this.getNeighbors(row, col);
+                for (const [nr, nc] of neighbors) {
+                    if (this.board[nr][nc] === opponent) {
+                        const oppGroup = this.getGroup(nr, nc);
+                        if (this.countLiberties(oppGroup) === 0) {
+                            capturesOpponent = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Remove temporary stone
+                this.board[row][col] = null;
+
+                return hasLiberties || capturesOpponent;
+            }
+
+            getNeighbors(row, col) {
+                const neighbors = [];
+                if (row > 0) neighbors.push([row - 1, col]);
+                if (row < 8) neighbors.push([row + 1, col]);
+                if (col > 0) neighbors.push([row, col - 1]);
+                if (col < 8) neighbors.push([row, col + 1]);
+                return neighbors;
+            }
+
+            getGroup(row, col) {
+                const color = this.board[row][col];
+                if (!color) return [];
+
+                const group = [];
+                const visited = Array(9).fill(null).map(() => Array(9).fill(false));
+                const stack = [[row, col]];
+
+                while (stack.length > 0) {
+                    const [r, c] = stack.pop();
+                    if (visited[r][c]) continue;
+
+                    visited[r][c] = true;
+                    group.push([r, c]);
+
+                    const neighbors = this.getNeighbors(r, c);
+                    for (const [nr, nc] of neighbors) {
+                        if (!visited[nr][nc] && this.board[nr][nc] === color) {
+                            stack.push([nr, nc]);
+                        }
+                    }
+                }
+
+                return group;
+            }
+
+            countLiberties(group) {
+                const liberties = new Set();
+                for (const [r, c] of group) {
+                    const neighbors = this.getNeighbors(r, c);
+                    for (const [nr, nc] of neighbors) {
+                        if (this.board[nr][nc] === null) {
+                            liberties.add(`${nr},${nc}`);
+                        }
+                    }
+                }
+                return liberties.size;
+            }
+
+            checkCaptures(row, col, opponent) {
+                const neighbors = this.getNeighbors(row, col);
+                const captured = [];
+
+                for (const [nr, nc] of neighbors) {
+                    if (this.board[nr][nc] === opponent) {
+                        const group = this.getGroup(nr, nc);
+                        if (this.countLiberties(group) === 0) {
+                            // Capture the group
+                            for (const [gr, gc] of group) {
+                                this.board[gr][gc] = null;
+                                captured.push([gr, gc]);
+                            }
+                            this.captures[this.currentPlayer] += group.length;
+                        }
+                    }
+                }
+
+                // Animate captures
+                if (captured.length > 0) {
+                    this.animateCaptures(captured);
+                }
+            }
+
+            animateCaptures(positions) {
+                for (const [row, col] of positions) {
+                    const index = row * 9 + col;
+                    const intersection = document.querySelectorAll('.intersection')[index];
+                    const stone = intersection.querySelector('.stone');
+                    if (stone) {
+                        stone.classList.add('captured-stone');
+                    }
+                }
+            }
+
+            pass() {
+                this.passes++;
+                if (this.passes === 2) {
+                    this.endGame();
+                } else {
+                    this.currentPlayer = this.currentPlayer === 'black' ? 'white' : 'black';
+                    this.updateActivePlayer();
+                    this.updateStatus(`${this.currentPlayer === 'black' ? 'Your' : "AI's"} turn`);
+                    
+                    if (this.currentPlayer === 'white') {
+                        setTimeout(() => this.aiMove(), 1000);
+                    }
+                }
+            }
+
+            endGame() {
+                this.gameOver = true;
+                const score = this.calculateScore();
+                const winner = score.black > score.white ? 'Black' : 'White';
+                this.updateStatus(`Game Over! ${winner} wins! Black: ${score.black}, White: ${score.white}`);
+                this.showTerritory();
+            }
+
+            calculateScore() {
+                const territory = this.calculateTerritory();
+                return {
+                    black: territory.black + this.captures.black,
+                    white: territory.white + this.captures.white + 6.5 // Komi
+                };
+            }
+
+            calculateTerritory() {
+                const territory = { black: 0, white: 0 };
+                const visited = Array(9).fill(null).map(() => Array(9).fill(false));
+
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        if (!visited[row][col] && this.board[row][col] === null) {
+                            const { owner, area } = this.floodFillTerritory(row, col, visited);
+                            if (owner === 'black') territory.black += area.length;
+                            else if (owner === 'white') territory.white += area.length;
+                        }
+                    }
+                }
+
+                return territory;
+            }
+
+            floodFillTerritory(startRow, startCol, visited) {
+                const area = [];
+                const stack = [[startRow, startCol]];
+                const borderingColors = new Set();
+
+                while (stack.length > 0) {
+                    const [row, col] = stack.pop();
+                    if (visited[row][col]) continue;
+
+                    visited[row][col] = true;
+                    area.push([row, col]);
+
+                    const neighbors = this.getNeighbors(row, col);
+                    for (const [nr, nc] of neighbors) {
+                        if (this.board[nr][nc] === null && !visited[nr][nc]) {
+                            stack.push([nr, nc]);
+                        } else if (this.board[nr][nc] !== null) {
+                            borderingColors.add(this.board[nr][nc]);
+                        }
+                    }
+                }
+
+                const owner = borderingColors.size === 1 ? [...borderingColors][0] : null;
+                return { owner, area };
+            }
+
+            showTerritory() {
+                const overlay = document.getElementById('territory-overlay');
+                overlay.innerHTML = '';
+                const visited = Array(9).fill(null).map(() => Array(9).fill(false));
+
+                for (let row = 0; row < 9; row++) {
+                    for (let col = 0; col < 9; col++) {
+                        if (!visited[row][col] && this.board[row][col] === null) {
+                            const { owner, area } = this.floodFillTerritory(row, col, visited);
+                            if (owner) {
+                                for (const [r, c] of area) {
+                                    const square = document.createElement('div');
+                                    square.className = `territory-square ${owner}`;
+                                    square.style.left = `${c * 50}px`;
+                                    square.style.top = `${r * 50}px`;
+                                    overlay.appendChild(square);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                overlay.classList.add('show');
+                setTimeout(() => overlay.classList.remove('show'), 3000);
+            }
+
+            updateDisplay() {
+                const intersections = document.querySelectorAll('.intersection');
+                
+                intersections.forEach((intersection, index) => {
+                    const row = Math.floor(index / 9);
+                    const col = index % 9;
+                    const stone = this.board[row][col];
+                    
+                    intersection.innerHTML = '';
+                    
+                    if (stone) {
+                        const stoneEl = document.createElement('div');
+                        stoneEl.className = `stone ${stone}`;
+                        intersection.appendChild(stoneEl);
+                        
+                        // Add last move marker
+                        if (this.lastMove && this.lastMove.row === row && this.lastMove.col === col) {
+                            const marker = document.createElement('div');
+                            marker.className = 'last-move-marker';
+                            intersection.appendChild(marker);
+                        }
+                    }
+                });
+
+                // Update captures
+                document.getElementById('captures1').textContent = this.captures.black;
+                document.getElementById('captures2').textContent = this.captures.white;
+            }
+
+            updateStatus(message) {
+                const status = document.getElementById('status');
+                status.innerHTML = this.currentPlayer === 'white' && !this.gameOver ? 
+                    `<span class="ai-thinking">${message}</span>` : message;
+            }
+
+            updateActivePlayer() {
+                document.getElementById('player1').classList.toggle('active', this.currentPlayer === 'black');
+                document.getElementById('player2').classList.toggle('active', this.currentPlayer === 'white');
+            }
+
+            newGame() {
+                this.board = Array(9).fill(null).map(() => Array(9).fill(null));
+                this.currentPlayer = 'black';
+                this.captures = { black: 0, white: 0 };
+                this.lastMove = null;
+                this.passes = 0;
+                this.gameOver = false;
+                this.updateDisplay();
+                this.updateActivePlayer();
+                this.updateStatus('Your turn - Click to place a stone');
+                document.getElementById('territory-overlay').classList.remove('show');
+            }
+        }
+
+        // Initialize game
+        const game = new MiniGoGame();
+        game.updateActivePlayer();
+    </script>
+</body>
+</html>
