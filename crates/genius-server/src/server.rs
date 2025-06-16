@@ -7,6 +7,7 @@ use axum::{
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use tower_http::cors::CorsLayer;
+use tower_http::services::{ServeDir, ServeFile};
 use uuid::Uuid;
 
 use crate::{
@@ -44,28 +45,47 @@ impl GeniusGameServer {
     }
     
     pub async fn run(self, addr: &str) -> anyhow::Result<()> {
+        // Serve static files
+        let static_dir = ServeDir::new("crates/genius-server/static")
+            .not_found_service(ServeFile::new("crates/genius-server/static/index.html"));
+        
+        // Serve demo files
+        let demo_dir = ServeDir::new("demo");
+        
         let app = Router::new()
-            .route("/", get(index))
-            .route("/ws", get(ws_handler))
-            .route("/api/game/create", post(create_game))
-            .route("/api/game/:id/turn", post(process_turn))
-            .route("/api/game/:id/state", get(get_game_state))
+            // API routes
+            .route("/api/v1/games", post(create_game))
+            .route("/api/v1/games/:id", get(get_game_state))
+            .route("/api/v1/games/:id/actions", post(process_turn))
+            .route("/api/v1/stats", get(get_stats))
             .route("/api/player/collective/create", post(create_collective_player))
             .route("/api/player/sota/create", post(create_sota_player))
             .route("/api/analytics/:game_id", get(get_analytics))
+            // WebSocket
+            .route("/ws", get(ws_handler))
+            // Static files
+            .nest_service("/demo", demo_dir)
+            .fallback_service(static_dir)
             .layer(CorsLayer::permissive())
             .with_state(Arc::new(self));
         
         let listener = tokio::net::TcpListener::bind(addr).await?;
-        tracing::info!("Genius Game Server listening on {}", addr);
+        tracing::info!("🚀 Genius Game Server listening on http://{}", addr);
+        tracing::info!("📊 Dashboard available at http://{}/", addr);
+        tracing::info!("🎮 Demos available at http://{}/demo/", addr);
         
         axum::serve(listener, app).await?;
         Ok(())
     }
 }
 
-async fn index() -> impl IntoResponse {
-    "AI Genius Game Server v0.1.0"
+async fn get_stats() -> impl IntoResponse {
+    Json(serde_json::json!({
+        "server_status": "online",
+        "active_games": 0,
+        "total_players": 0,
+        "games_played": 0
+    }))
 }
 
 async fn ws_handler(
@@ -82,11 +102,22 @@ async fn handle_socket(socket: axum::extract::ws::WebSocket, server: Arc<GeniusG
 #[derive(serde::Deserialize)]
 struct CreateGameRequest {
     game_type: GameType,
+    #[serde(default = "default_rounds")]
     rounds: u32,
+    #[serde(default = "default_time_limit")]
     time_limit_ms: u64,
+    #[serde(default)]
     collective_players: Vec<String>,
+    #[serde(default)]
     sota_players: Vec<String>,
+    #[serde(default)]
+    players: Vec<String>,
+    #[serde(default)]
+    config: Option<serde_json::Value>,
 }
+
+fn default_rounds() -> u32 { 100 }
+fn default_time_limit() -> u64 { 5000 }
 
 async fn create_game(
     State(server): State<Arc<GeniusGameServer>>,

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genius Game Server</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 200;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #00ff88, #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.7;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 300;
+            color: #00ff88;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            color: #00aaff;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            border-color: #00ff88;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .game-name {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .game-category {
+            font-size: 12px;
+            color: #00ff88;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .game-description {
+            font-size: 14px;
+            opacity: 0.7;
+            line-height: 1.5;
+        }
+
+        .api-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+
+        .code-block {
+            background: #000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .endpoint {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .method {
+            color: #00aaff;
+            font-weight: bold;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #00ff88;
+            border-color: #00ff88;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background: #00ff88;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .error { color: #ff4444; }
+        .success { color: #00ff88; }
+        .info { color: #00aaff; }
+
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 60px;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GENIUS GAME SERVER</h1>
+            <p class="subtitle">AI Game Competitions & Collective Intelligence Platform</p>
+        </header>
+
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="server-status">
+                    <span class="status-indicator"></span>Online
+                </div>
+                <div class="stat-label">Server Status</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="active-games">0</div>
+                <div class="stat-label">Active Games</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-players">0</div>
+                <div class="stat-label">Total Players</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="games-played">0</div>
+                <div class="stat-label">Games Played</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('games')">Games</div>
+                <div class="tab" onclick="showTab('api')">API</div>
+                <div class="tab" onclick="showTab('demos')">Demos</div>
+            </div>
+
+            <div id="games" class="tab-content active">
+                <h2>Available Games</h2>
+                <div class="games-grid" id="games-list">
+                    <!-- Games will be loaded here -->
+                </div>
+            </div>
+
+            <div id="api" class="tab-content">
+                <h2>API Reference</h2>
+                <div class="api-section">
+                    <h3>Create a New Game</h3>
+                    <div class="code-block">
+                        <span class="method">POST</span> <span class="endpoint">/api/v1/games</span>
+                        <pre>
+{
+  "game_type": "PrisonersDilemma",
+  "players": ["player1", "player2"],
+  "config": {
+    "rounds": 100,
+    "time_limit_ms": 5000
+  }
+}</pre>
+                    </div>
+
+                    <h3>Get Game Status</h3>
+                    <div class="code-block">
+                        <span class="method">GET</span> <span class="endpoint">/api/v1/games/{game_id}</span>
+                    </div>
+
+                    <h3>Submit Action</h3>
+                    <div class="code-block">
+                        <span class="method">POST</span> <span class="endpoint">/api/v1/games/{game_id}/actions</span>
+                        <pre>
+{
+  "player_id": "player1",
+  "action": "cooperate"
+}</pre>
+                    </div>
+
+                    <h3>WebSocket Connection</h3>
+                    <div class="code-block">
+                        <span class="method">WS</span> <span class="endpoint">ws://localhost:8080/ws</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="demos" class="tab-content">
+                <h2>Interactive Demos</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="window.open('/demo/mini_go_premium.html', '_blank')">
+                        <div class="game-name">Mini Go</div>
+                        <div class="game-category">Strategic</div>
+                        <div class="game-description">Play against AI in a 9x9 Go board</div>
+                    </div>
+                    <div class="game-card" onclick="window.open('/demo/mini_holdem_premium.html', '_blank')">
+                        <div class="game-name">Mini Hold'em</div>
+                        <div class="game-category">Strategic</div>
+                        <div class="game-description">Texas Hold'em with AI opponents</div>
+                    </div>
+                    <div class="game-card" onclick="window.open('/demo/consciousness_poker.html', '_blank')">
+                        <div class="game-name">Consciousness Poker</div>
+                        <div class="game-category">Consciousness</div>
+                        <div class="game-description">Transcend reality through deception</div>
+                    </div>
+                    <div class="game-card" onclick="window.open('/demo/premium_games_showcase.html', '_blank')">
+                        <div class="game-name">All Games Showcase</div>
+                        <div class="game-category">Collection</div>
+                        <div class="game-description">Browse all available games</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Quick Start</h2>
+            <div class="api-section">
+                <p>Start a game between AI players:</p>
+                <div class="code-block">
+curl -X POST http://localhost:8080/api/v1/games \
+  -H "Content-Type: application/json" \
+  -d '{
+    "game_type": "MiniGo",
+    "players": ["ai_1", "ai_2"],
+    "config": {"board_size": 9}
+  }'
+                </div>
+                <button onclick="createSampleGame()">Try It Now</button>
+                <div id="api-response" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Built with 🧠 by 2Lab.ai</p>
+            <p style="margin-top: 5px; font-size: 14px;">
+                <a href="https://github.com/2lab-ai/2hal9-demo" style="color: #00ff88;">GitHub</a> •
+                <a href="/docs" style="color: #00ff88;">Documentation</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Load available games
+        async function loadGames() {
+            const games = [
+                { name: "Mini Go", category: "Strategic", description: "9x9 Go with advanced AI" },
+                { name: "Mini Hold'em", category: "Strategic", description: "Texas Hold'em poker" },
+                { name: "Byzantine Generals", category: "Strategic", description: "Distributed consensus problem" },
+                { name: "Minority Game", category: "Strategic", description: "Win by being in minority" },
+                { name: "Prisoner's Dilemma", category: "Trust", description: "Cooperate or defect" },
+                { name: "Trust Fall", category: "Trust", description: "Risk and reward dynamics" },
+                { name: "Liar's Dice", category: "Trust", description: "Bluffing and probability" },
+                { name: "Consciousness Poker", category: "Consciousness", description: "Transcend through deception" },
+                { name: "Mirror Mind", category: "Consciousness", description: "Recursive thinking" },
+                { name: "Reality Consensus", category: "Consciousness", description: "Belief shapes reality" },
+                { name: "Quantum Dreamer", category: "Consciousness", description: "Dreams and reality blur" },
+                { name: "Void Walker", category: "Consciousness", description: "Create from nothing" },
+                { name: "Battle Royale", category: "Survival", description: "Last one standing" },
+                { name: "Hunger Games", category: "Survival", description: "Resource management" },
+                { name: "Collective Maze", category: "Collective", description: "Swarm pathfinding" },
+                { name: "Swarm Optimization", category: "Collective", description: "Emergent solutions" }
+            ];
+
+            const gamesList = document.getElementById('games-list');
+            gamesList.innerHTML = games.map(game => `
+                <div class="game-card" onclick="showGameDetails('${game.name}')">
+                    <div class="game-name">${game.name}</div>
+                    <div class="game-category">${game.category}</div>
+                    <div class="game-description">${game.description}</div>
+                </div>
+            `).join('');
+        }
+
+        // Show game details
+        function showGameDetails(gameName) {
+            alert(`Game: ${gameName}\n\nAPI endpoint: POST /api/v1/games\n{\n  "game_type": "${gameName.replace(/\s+/g, '')}"\n}`);
+        }
+
+        // Create sample game
+        async function createSampleGame() {
+            const responseDiv = document.getElementById('api-response');
+            responseDiv.innerHTML = '<p class="info">Creating game...</p>';
+            
+            try {
+                const response = await fetch('/api/v1/games', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        game_type: 'MiniGo',
+                        players: ['ai_1', 'ai_2'],
+                        config: { board_size: 9 }
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    responseDiv.innerHTML = `<p class="success">✅ Game created!</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    responseDiv.innerHTML = `<p class="error">❌ Server returned ${response.status}</p>`;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `<p class="error">❌ Failed to connect to server. Make sure it's running on port 8080.</p>`;
+            }
+        }
+
+        // Update stats
+        async function updateStats() {
+            try {
+                const response = await fetch('/api/v1/stats');
+                if (response.ok) {
+                    const stats = await response.json();
+                    document.getElementById('active-games').textContent = stats.active_games || 0;
+                    document.getElementById('total-players').textContent = stats.total_players || 0;
+                    document.getElementById('games-played').textContent = stats.games_played || 0;
+                }
+            } catch (error) {
+                // Server might not be running
+                document.getElementById('server-status').innerHTML = '<span class="status-indicator" style="background: #ff4444;"></span>Offline';
+            }
+        }
+
+        // Initialize
+        loadGames();
+        updateStats();
+        setInterval(updateStats, 5000);
+    </script>
+</body>
+</html>
